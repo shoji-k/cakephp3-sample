@@ -9,6 +9,28 @@ class ArticlesController extends AppController
 
         $this->loadComponent('Paginator');
         $this->loadComponent('Flash');
+
+        $this->Auth->allow(['tags']);
+    }
+
+    public function isAuthorized($user)
+    {
+        $action = $this->request->getParam('action');
+        // add および tags アクションは、常にログインしているユーザーに許可されます。
+        if (in_array($action, ['add', 'tags'])) {
+            return true;
+        }
+
+        // 他のすべてのアクションにはスラッグが必要です。
+        $slug = $this->request->getParam('pass.0');
+        if (!$slug) {
+            return false;
+        }
+
+        // 記事が現在のユーザーに属していることを確認します。
+        $article = $this->Articles->findBySlug($slug)->first();
+
+        return $article->user_id === $user['id'];
     }
 
     public function index()

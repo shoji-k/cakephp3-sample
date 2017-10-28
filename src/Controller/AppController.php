@@ -73,6 +73,12 @@ class AppController extends Controller
         $this->Auth->allow(['display', 'view', 'index']);
     }
 
+    public function isAuthorized($user)
+    {
+        // デフォルトでは、アクセスを拒否します。
+        return false;
+    }
+
     /**
      * Before render callback.
      *
